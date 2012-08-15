@@ -1,5 +1,5 @@
-#Python script for first date program, spotify puzzle
 """
+Python script for first date program, spotify puzzle
 Input is the date and output is the least date possible of all the combinations
 """
 import sys
