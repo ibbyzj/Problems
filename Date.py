@@ -1,6 +1,11 @@
-#Python script for first date program
+#Python script for first date program, spotify puzzle
+"""
+Input is the date and output is the least date possible of all the combinations
+"""
 import sys
 import itertools
+import time
+import datetime
 
 #Function to check if the numbers of days for the given month in date are correct ( also does the leap year check)
 def MMandDDCheck(date,isLeap):
@@ -25,8 +30,8 @@ def MMandDDCheck(date,isLeap):
 		return False
 	return True
 			
-	
-def doCheck(date):
+#Function to check validity of date, if months, days and years are valid do individual month checks via the above function
+def dateValidity(date):
 	
 	isLeap = True
 	month, day = int(date[0]), int(date[1])
@@ -50,7 +55,6 @@ def doCheck(date):
 	
 	if (year%4 == 0) or (year%100 == 0 and year%400 != 0):
 		isLeap = True
-		#print ('/').join(date)+" Leap year.......doing extra checks"
 		if MMandDDCheck([date[0],date[1]],isLeap) == False:
 			return False
 		else:
@@ -58,64 +62,48 @@ def doCheck(date):
 			return formatted_date
 	else:
 		isLeap = False
-		#print ('/').join(date)+" Not a leap year.....doing extra checks"
 		if MMandDDCheck([date[0],date[1]],isLeap) == False:
 			return False
 		else:
 			formatted_date = str(year)+'-'+str(date[0])+'-'+str(date[1])
 			return formatted_date
 	
-	
+
 date = raw_input("Enter the Date: ")
 newd = date.split('/')
 
-#First generate all the permutations of the date to get the possibilities, then do a simple month and day check
+#First generate all the permutations of the date to get the possibilities
 permuted = list(itertools.permutations(newd))
 dates = []
 
 #Iterate over the list combinations, add the date to the new list if it is a valid date
 for each_date in permuted:
-	if doCheck(each_date)==False:
+	if dateValidity(each_date)==False:
 		continue
 	else:
-	 	new_Date = doCheck(each_date)
+	 	new_Date = dateValidity(each_date)
 	 	dates.append(new_Date)
-print dates
-if len(dates) == 0:
+
+#Get the dates and remove the duplicates added
+dates = list(set(dates))
+
+dodoDates = []
+
+#Create a datetime list for easier sorting if required
+for each_date in dates:
+	dodoDates.append(datetime.date(int(each_date.split('-')[0]),int(each_date.split('-')[1]),int(each_date.split('-')[2])))
+	
+dates = []
+
+#If no dates obtained then the given date is illegal
+if len(dodoDates) == 0:
 	print date+" is illegal"
-if len(dates) == 1:
-	print dates[0]
-else:
-	print "Ohoh"
-	#for each_date in dates:
-		
+	sys.exit()
+	
+#If only one date is obtained then display it
+if len(dodoDates) == 1:
+	print dodoDates[0]
+	sys.exit()
 
-
-
-
-
-
-"""
-def getYear(date,year):
-	global isLeap
-	isLeap = True
-	for each in date:
-		if int(each) > 31 or int(each) == 0:
-			year = each
-			break
-		if int(each) < int(year):
-			year = each
-	date.remove(year)
-	if len(year) == 1:
-		year = '200'+year
-	if len(year) == 2:
-		year = '20'+year
-	if len(year) == 3:
-		year = '2'+year	
-	year = int(year)
-	if (year%4 == 0) or (year%100 == 0 and year%400 != 0):
-		isLeap = True
-	else:
-		isLeap = False
-	return year
-"""
+#If multiple dates are present use the date time min function to ge the minimum date
+print min(dodoDates)
